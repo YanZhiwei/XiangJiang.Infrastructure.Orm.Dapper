@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>YanZhiwei</Authors>
+    <Product>XiangJiang</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Orm Dapper tool library,using the document: https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper/wiki; Welcome to pull request or star.</Description>
+    <PackageProjectUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</RepositoryUrl>
+    <PackageIcon>nugetico.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="XiangJiang" Version="1.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.assets\nugetico.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
