@@ -29,8 +29,8 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             Checker.Begin()
                 .NotNullOrEmpty(connectString, nameof(connectString))
                 .NotNull(dbProviderFactory, nameof(dbProviderFactory));
-            ConnectString = connectString;
             _dbProviderFactory = dbProviderFactory;
+            ConnectString = connectString;
         }
 
         #endregion Constructors
@@ -55,12 +55,14 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         ///     当前数据库连接
         /// </summary>
         public IDbConnection CurrentConnection =>
-            TransactionEnabled ? CurrentTransaction.Connection : CreateConnection();
+            TransactionEnabled ? CurrentTransaction.Connection : _dbConnection;
 
         /// <summary>
         ///     获取 是否开启事务提交
         /// </summary>
         public bool TransactionEnabled => CurrentTransaction != null;
+
+        private DbConnection _dbConnection;
 
         private readonly DbProviderFactory _dbProviderFactory;
 
@@ -75,7 +77,7 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified)
         {
             if (!TransactionEnabled)
-                CurrentTransaction = CreateConnection().BeginTransaction(isolationLevel);
+                CurrentTransaction = OpenOrCreateConnection().BeginTransaction(isolationLevel);
         }
 
         /// <summary>
@@ -112,12 +114,23 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             where T : class
         {
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
-            using (var connection = CurrentConnection)
+            try
             {
                 var table = new DataTable();
-                table.Load(connection.ExecuteReader(sql, parameters, null, timeoutSeconds));
+                table.Load(OpenOrCreateConnection().ExecuteReader(sql, parameters, CurrentTransaction, timeoutSeconds));
                 return table;
             }
+            finally
+            {
+                CloseCurrentConnection();
+            }
+
+        }
+
+        private void CloseCurrentConnection()
+        {
+            if (!TransactionEnabled)
+                CurrentConnection.Dispose();
         }
 
         /// <summary>
@@ -136,12 +149,30 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
             try
             {
-                return CurrentConnection.Execute(sql, parameters, CurrentTransaction);
+                return OpenOrCreateConnection().Execute(sql, parameters, CurrentTransaction,timeoutSeconds);
             }
             finally
             {
-                if (!TransactionEnabled)
-                    CurrentConnection.Dispose();
+                CloseCurrentConnection();
+            }
+        }
+
+        /// <summary>
+        ///     ExecuteNonQuery
+        /// </summary>
+        /// <param name="sql">sql 语句</param>
+        /// <param name="timeoutSeconds">超时时间</param>
+        /// <returns>影响行数</returns>
+        public int ExecuteNonQuery(string sql, int timeoutSeconds = 30)
+        {
+            Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
+            try
+            {
+                return OpenOrCreateConnection().Execute(sql, null, CurrentTransaction);
+            }
+            finally
+            {
+                CloseCurrentConnection();
             }
         }
 
@@ -159,7 +190,7 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             where T : class
         {
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
-            return CurrentConnection.ExecuteReader(sql, parameters, null, timeoutSeconds);
+            return OpenOrCreateConnection().ExecuteReader(sql, parameters, CurrentTransaction, timeoutSeconds);
         }
 
         /// <summary>
@@ -176,9 +207,13 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             where T : class
         {
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
-            using (var connection = CurrentConnection)
+            try
             {
-                return connection.ExecuteScalar(sql, parameters, null, timeoutSeconds, null);
+                return OpenOrCreateConnection().ExecuteScalar(sql, parameters, CurrentTransaction, timeoutSeconds, null);
+            }
+            finally
+            {
+                CloseCurrentConnection();
             }
         }
 
@@ -195,11 +230,17 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         public T Query<T>(string sql, T parameters = null, int timeoutSeconds = 30)
             where T : class
         {
+            
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
-            using (var connection = CurrentConnection)
+            try
             {
-                return connection.Query<T>(sql, parameters, null, true, timeoutSeconds)?.FirstOrDefault();
+                return OpenOrCreateConnection().Query<T>(sql, parameters, CurrentTransaction, true, timeoutSeconds)?.FirstOrDefault();
             }
+            finally
+            {
+                CloseCurrentConnection();
+            }
+
         }
 
         /// <summary>
@@ -216,10 +257,16 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             where T : class
         {
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
-            using (var connection = CurrentConnection)
+            try
             {
-                return connection.Query<T>(sql, parameters, null, true, timeoutSeconds).ToList();
+                return OpenOrCreateConnection().Query<T>(sql, parameters, CurrentTransaction, true, timeoutSeconds)
+                    .ToList();
             }
+            finally
+            {
+                CloseCurrentConnection();
+            }
+
         }
 
         /// <summary>
@@ -231,14 +278,17 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
                 CurrentTransaction.Rollback();
         }
 
-        private IDbConnection CreateConnection()
+        private IDbConnection OpenOrCreateConnection()
         {
-            IDbConnection dbConnection = _dbProviderFactory.CreateConnection();
-            dbConnection.ConnectionString = ConnectString;
-            if (dbConnection.State != ConnectionState.Open)
-                dbConnection.Open();
-
-            return dbConnection;
+            if (TransactionEnabled)
+            {
+                return CurrentTransaction.Connection;
+            }
+            _dbConnection = _dbProviderFactory.CreateConnection();
+            _dbConnection.ConnectionString = ConnectString;
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+            return _dbConnection;
         }
 
         #endregion Methods

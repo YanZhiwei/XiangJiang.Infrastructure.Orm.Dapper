@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiangJiang.Infrastructure.Orm.Dapper", "XiangJiang.Infrastructure.Orm.Dapper\XiangJiang.Infrastructure.Orm.Dapper.csproj", "{D3514C61-8E65-414A-9F81-33B7B327C1E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XiangJiang.Infrastructure.Orm.Dapper", "XiangJiang.Infrastructure.Orm.Dapper\XiangJiang.Infrastructure.Orm.Dapper.csproj", "{D3514C61-8E65-414A-9F81-33B7B327C1E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiangJiang.Infrastructure.Orm.DapperTests", "XiangJiang.Infrastructure.Orm.DapperTests\XiangJiang.Infrastructure.Orm.DapperTests.csproj", "{FA9182DB-2709-4856-8C7C-BFAB2D41ABD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D3514C61-8E65-414A-9F81-33B7B327C1E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3514C61-8E65-414A-9F81-33B7B327C1E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3514C61-8E65-414A-9F81-33B7B327C1E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA9182DB-2709-4856-8C7C-BFAB2D41ABD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA9182DB-2709-4856-8C7C-BFAB2D41ABD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA9182DB-2709-4856-8C7C-BFAB2D41ABD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA9182DB-2709-4856-8C7C-BFAB2D41ABD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
