@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>YanZhiwei</Authors>
     <Product>XiangJiang</Product>
@@ -9,11 +9,11 @@
     <PackageProjectUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</RepositoryUrl>
     <PackageIcon>nugetico.png</PackageIcon>
-    <Version>1.0.1</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.35" />
-    <PackageReference Include="XiangJiang" Version="1.0.4" />
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="XiangJiang" Version="1.0.9" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.assets\nugetico.png">
