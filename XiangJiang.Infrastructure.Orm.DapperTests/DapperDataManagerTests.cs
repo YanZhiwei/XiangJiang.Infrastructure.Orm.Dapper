@@ -41,9 +41,9 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
                 {
                     var company = new Company
                     {
-                        Address = "shanghai" + i,
+                        Address = "zhuzhou",
                         Age = RandomHelper.NextNumber(0, 100),
-                        Id = RandomHelper.NextNumber(0, 100),
+                        Id = RandomHelper.NextNumber(0, 1000000),
                         Name = RandomHelper.NextHexString(4),
                         Salary = 13.23f
                     };
@@ -71,7 +71,7 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
             {
                 Address = "shanghai",
                 Age = RandomHelper.NextNumber(0, 100),
-                Id = RandomHelper.NextNumber(0, 100),
+                Id = RandomHelper.NextNumber(0, 1000000),
                 Name = RandomHelper.NextHexString(4),
                 Salary = 13.23f
             };
@@ -93,7 +93,7 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
                 {
                     Address = "shanghai1234",
                     Age = RandomHelper.NextNumber(0, 100),
-                    Id = RandomHelper.NextNumber(0, 100),
+                    Id = RandomHelper.NextNumber(0, 1000000),
                     Name = RandomHelper.NextHexString(4),
                     Salary = 13.23f
                 };
@@ -124,7 +124,7 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
                 {
                     Address = "shanghai123456",
                     Age = RandomHelper.NextNumber(0, 100),
-                    Id = RandomHelper.NextNumber(0, 100),
+                    Id = RandomHelper.NextNumber(0, 1000000),
                     Name = RandomHelper.NextHexString(4),
                     Salary = 13.23f
                 };
