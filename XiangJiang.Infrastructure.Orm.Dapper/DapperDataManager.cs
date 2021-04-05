@@ -86,7 +86,11 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         public void Commit()
         {
             if (TransactionEnabled)
+            {
                 CurrentTransaction.Commit();
+                CurrentConnection?.Dispose();
+                CurrentTransaction = null;
+            }
         }
 
         public void Dispose()
@@ -149,7 +153,7 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
             try
             {
-                return OpenOrCreateConnection().Execute(sql, parameters, CurrentTransaction,timeoutSeconds);
+                return OpenOrCreateConnection().Execute(sql, parameters, CurrentTransaction, timeoutSeconds);
             }
             finally
             {
@@ -230,7 +234,7 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         public T Query<T>(string sql, T parameters = null, int timeoutSeconds = 30)
             where T : class
         {
-            
+
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));
             try
             {
@@ -253,7 +257,7 @@ namespace XiangJiang.Infrastructure.Orm.Dapper
         /// <returns>集合</returns>
         /// 时间：2016-01-19 16:25
         /// 备注：
-        public List<T> QueryList<T>(string sql, T parameters, int timeoutSeconds = 30)
+        public List<T> QueryList<T>(string sql, T parameters = null, int timeoutSeconds = 30)
             where T : class
         {
             Checker.Begin().NotNullOrEmpty(sql, nameof(sql));

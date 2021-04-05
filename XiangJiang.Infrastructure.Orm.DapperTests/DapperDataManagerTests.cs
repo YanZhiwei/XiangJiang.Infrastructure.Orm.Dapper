@@ -31,8 +31,36 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
    ADDRESS        CHAR(50),
    SALARY         REAL
 );";
-            var actual = _dapperDataManager.ExecuteNonQuery(createTable);
-            Assert.IsTrue(actual >= 0);
+            using (_dapperDataManager)
+            {
+                var actual = _dapperDataManager.ExecuteNonQuery(createTable);
+                Assert.IsTrue(actual >= 0);
+
+                var sql = "insert into company values(@Id,@Name,@Age,@Address,@Salary)";
+                for (var i = 0; i < 10; i++)
+                {
+                    var company = new Company
+                    {
+                        Address = "zhuzhou",
+                        Age = RandomHelper.NextNumber(0, 100),
+                        Id = RandomHelper.NextNumber(0, 1000000),
+                        Name = RandomHelper.NextHexString(4),
+                        Salary = 13.23f
+                    };
+                    var createActual = _dapperDataManager.ExecuteNonQuery(sql, company);
+                    Assert.IsTrue(createActual > 0);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void QueryListTest()
+        {
+            using (_dapperDataManager)
+            {
+                var actual = _dapperDataManager.QueryList<Company>("select * from company", null);
+                Assert.IsTrue(actual.Count == 10);
+            }
         }
 
         [TestMethod]
@@ -43,12 +71,76 @@ namespace XiangJiang.Infrastructure.Orm.DapperTests
             {
                 Address = "shanghai",
                 Age = RandomHelper.NextNumber(0, 100),
-                Id = RandomHelper.NextNumber(0, 100),
+                Id = RandomHelper.NextNumber(0, 1000000),
                 Name = RandomHelper.NextHexString(4),
                 Salary = 13.23f
             };
-            var actual = _dapperDataManager.ExecuteNonQuery(sql, company);
-            Assert.IsTrue(actual >= 0);
+            using (_dapperDataManager)
+            {
+                var actual = _dapperDataManager.ExecuteNonQuery(sql, company);
+                Assert.IsTrue(actual >= 0);
+            }
+        }
+
+        [TestMethod]
+        public void TransactionRollbackTest()
+        {
+            using (_dapperDataManager)
+            {
+                _dapperDataManager.BeginTransaction();
+                var sql = "insert into company values(@Id,@Name,@Age,@Address,@Salary)";
+                var company = new Company
+                {
+                    Address = "shanghai1234",
+                    Age = RandomHelper.NextNumber(0, 100),
+                    Id = RandomHelper.NextNumber(0, 1000000),
+                    Name = RandomHelper.NextHexString(4),
+                    Salary = 13.23f
+                };
+                var actual = _dapperDataManager.ExecuteNonQuery(sql, company);
+                Assert.IsTrue(actual >= 0);
+                _dapperDataManager.Rollback();
+            }
+
+            using (_dapperDataManager)
+            {
+                var find = _dapperDataManager.Query("select * from company where Address=@Address", new Company
+                {
+                    Address = "shanghai1234"
+                });
+                Assert.IsNull(find);
+            }
+        }
+
+
+        [TestMethod]
+        public void TransactionCommitTest()
+        {
+            using (_dapperDataManager)
+            {
+                _dapperDataManager.BeginTransaction();
+                var sql = "insert into company values(@Id,@Name,@Age,@Address,@Salary)";
+                var company = new Company
+                {
+                    Address = "shanghai123456",
+                    Age = RandomHelper.NextNumber(0, 100),
+                    Id = RandomHelper.NextNumber(0, 1000000),
+                    Name = RandomHelper.NextHexString(4),
+                    Salary = 13.23f
+                };
+                var actual = _dapperDataManager.ExecuteNonQuery(sql, company);
+                Assert.IsTrue(actual >= 0);
+                _dapperDataManager.Commit();
+            }
+
+            using (_dapperDataManager)
+            {
+                var find = _dapperDataManager.Query("select * from company where Address=@Address", new Company
+                {
+                    Address = "shanghai123456"
+                });
+                Assert.IsNotNull(find);
+            }
         }
     }
 }

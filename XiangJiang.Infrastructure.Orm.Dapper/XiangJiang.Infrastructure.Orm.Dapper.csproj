@@ -5,11 +5,11 @@
         <Authors>YanZhiwei</Authors>
         <Product>XiangJiang</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Description>基于Dapper数据库操作辅助类库，欢迎RP以及Star。</Description>
+        <Description>基于Dapper数据库操作辅助类库，欢迎RP以及Star。具体使用参考：https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</Description>
         <PackageProjectUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</PackageProjectUrl>
         <RepositoryUrl>https://github.com/YanZhiwei/XiangJiang.Infrastructure.Orm.Dapper</RepositoryUrl>
         <PackageIcon>nugetico.png</PackageIcon>
-        <Version>2.0.1-beta</Version>
+        <Version>2.0.1</Version>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.78" />
